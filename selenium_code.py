@@ -17,7 +17,6 @@ import logging
 from selenium.webdriver.remote.remote_connection import LOGGER
 
 
-school = ''
 result = '0'
 
 # Засечение времени
@@ -53,7 +52,7 @@ def main_code(login, password, driver):
             driver.find_element(By.XPATH, "//input[@name='password']").send_keys(password)
             driver.find_element(By.XPATH, "//input[@type='submit']").click()
             try: 
-                if WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='message ']"))):
+                if WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='message ']"))):
                     driver.quit()
                     return "1"
             except:
@@ -74,7 +73,9 @@ def main_code(login, password, driver):
 # Скрипт для получения названия школ сотрудникам
 def get_school(driver):
     try:
-        driver.find_element(By.XPATH, "//a[text()='Профиль ']").click()
+        driver.find_element(By.XPATH, "//div[contains(@class, 'panel-container')]//a[2]").click()
+        WebDriverWait(driver, 60).until(lambda driver: driver.find_element(By.XPATH, "//a[text()='Профиль']")).click()
+        global school 
         school = WebDriverWait(driver, 60).until(lambda driver: driver.find_element(By.XPATH, "//dt[text()='Школа:']/..//a")).text
     except:
         return "4" 
@@ -97,116 +98,16 @@ def get_data(driver, lang):
     parallel = int(match.group())
     # Личные данные
     driver.find_element(By.XPATH, "//a[@id='TabPersonal']").click()
-    WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//label[text()='Фамилия']")))
+    WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//label[@for='nlast']")))
     iin = driver.find_element(By.XPATH, "//input[@id='personalNumber']").get_attribute('value')
     select = Select(driver.find_element(By.XPATH, "//select[@id='nationality']"))
     nationality = select.first_selected_option.text
-    if nationality == '- Выберите национальность -':
+    if (nationality == '- Выберите национальность -') or (nationality == '- Ұлты таңдаңыз -'):
         nationality = None
-    if lang == 'kz':
-        if nationality == 'казах / казашка':
-            nationality = 'қазақ'
-        elif nationality == 'русский / русская':
-            nationality = 'орыс'
-        elif nationality == 'немец / немка':
-            nationality == 'неміс'
-        elif nationality == 'азербайджанец / азербайджанка':
-            nationality == 'әзірбайжан'
-        elif nationality == 'башкир / башкирка':
-            nationality == 'башқұрт'
-        elif nationality == 'белорус / белоруска':
-            nationality == 'белорус'
-        elif nationality == 'грек / гречанка':
-            nationality == 'грек'
-        elif nationality == 'дунган / дунганка':
-            nationality == 'дунган'
-        elif nationality == 'еврей / еврейка':
-            nationality == 'еврей'
-        elif nationality == 'ингуш / ингушка':
-            nationality == 'ингуш'
-        elif nationality == 'кореец / кореянка':
-            nationality == 'кәріс'
-        elif nationality == 'курд / курдка':
-            nationality == 'күрт'
-        elif nationality == 'кыргыз / кыргызка':
-            nationality == 'қырғыз'
-        elif nationality == 'молдованин / молодованка':
-            nationality == 'молдаван'
-        elif nationality == 'поляк / полька':
-            nationality == 'поляк'
-        elif nationality == 'таджик / таджичка':
-            nationality == 'тәжік'
-        elif nationality == 'татарин / татарка':
-            nationality == 'татар'
-        elif nationality == 'турок / турчанка':
-            nationality == 'түрік'
-        elif nationality == 'узбек / узбечка':
-            nationality == 'өзбек'
-        elif nationality == 'уйгур / уйгурка':
-            nationality == 'ұйғыр'
-        elif nationality == 'украинец / украинка':
-            nationality == 'украин'
-        elif nationality == 'чеченец / чеченка':
-            nationality == 'шешен'
-        elif nationality == 'чуваш / чувашка':
-            nationality == 'чуваш'
-        elif nationality == 'другие национальности':
-            nationality == 'басқа ұлттар'
     select = Select(driver.find_element(By.XPATH, "//select[@id='nativeLanguage']"))
     native_lg = select.first_selected_option.text
-    if native_lg == '- Выберите язык -':
+    if (native_lg == '- Выберите язык -') or (native_lg == '- Тілі таңдаңыз -'):
         native_lg = None
-    if lang == 'kz':
-        if native_lg == 'Казахский':
-            native_lg == 'Қазақша'
-        elif native_lg == 'Русский':
-            native_lg = 'Орысша'
-        elif native_lg == 'Азербайджанский':
-            native_lg = 'Әзірбайжан тілі'
-        elif native_lg == 'Башкирский':
-            native_lg = 'Башқұрт тілі'
-        elif native_lg == 'Белорусский':
-            native_lg = 'Белорусс тілі'
-        elif native_lg == 'Греческий':
-            native_lg = 'Грек тілі'
-        elif native_lg == 'Дунганский':
-            native_lg = 'Дүнген тілі'
-        elif native_lg == 'Иврит':
-            native_lg = 'Иврит тілі'
-        elif native_lg == 'Ингушский':
-            native_lg = 'Ингуш тілі'
-        elif native_lg == 'Корейский':
-            native_lg = 'Корей тілі'
-        elif native_lg == 'Курдский':
-            native_lg = 'Күрд тілі'
-        elif native_lg == 'Кыргызский':
-            native_lg = 'Қырғыз тілі'
-        elif native_lg == 'Молдавский':
-            native_lg = 'Молдав тілі'
-        elif native_lg == 'Мордовский':
-            native_lg = 'Мордов тілі'
-        elif native_lg == 'Немецкий':
-            native_lg = 'Неміс тілі'
-        elif native_lg == 'Польский':
-            native_lg = 'Поляк тілі'
-        elif native_lg == 'Таджикский':
-            native_lg = 'Тәжік тілі'
-        elif native_lg == 'Татарский':
-            native_lg = 'Татар тілі'
-        elif native_lg == 'Турецкий':
-            native_lg = 'Түрік тілі'
-        elif native_lg == 'Узбекский':
-            native_lg = 'Өзбек тілі'
-        elif native_lg == 'Уйгурский':
-            native_lg = 'Ұйғыр тілі'
-        elif native_lg == 'Украинский':
-            native_lg = 'Украин тілі'
-        elif native_lg == 'Чеченский':
-            native_lg = 'Шешен тілі'
-        elif native_lg == 'Чувашский':
-            native_lg = 'Чуваш тілі'
-        elif native_lg == 'Другие языки':
-            native_lg = 'Басқа тілдер'
     svidetelstvo = driver.find_element(By.XPATH, "//input[@id='bcert_docnum']").get_attribute('value')
     kem_vydan = driver.find_element(By.XPATH, "//input[@id='bcert_issby']").get_attribute('value')
     data_vydachy = driver.find_element(By.XPATH, "//input[@id='birthcertificatedate']").get_attribute('value')
@@ -215,7 +116,7 @@ def get_data(driver, lang):
     medid = select.first_selected_option.text
     select = Select(driver.find_element(By.XPATH, "//select[@id='physid']"))
     physid = select.first_selected_option.text
-    address = driver.find_element(By.XPATH, "//input[@id='UserControlPersonEdit_Tabs_UserControlPersonEditPersonal_ActualAddress']").get_attribute('value')
+    address = driver.find_element(By.XPATH, "//input[@id='ActualAddress']").get_attribute('value')
     mphone = driver.find_element(By.XPATH, "//input[@name='mphone']").get_attribute('value')
     hphone = driver.find_element(By.XPATH, "//input[@name='hphone']").get_attribute('value')
     # Миграция
@@ -223,26 +124,32 @@ def get_data(driver, lang):
     WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//input[@id='wasInPreschoolInstitution']")))
     pre_school = driver.find_element(By.XPATH, "//input[@id='wasInPreschoolInstitution']").get_attribute('checked') 
     if pre_school == 'checked':
-        pre_school = 'Да'
+        if lang == 'ru':
+            pre_school = 'Да'
+        else:
+            pre_school = 'Иә'
     else:
-        pre_school = 'Нет'
+        if lang == 'ru':
+            pre_school = 'Нет'
+        else:
+            pre_school = 'Жоқ'
     # Родственники
     driver.find_element(By.XPATH, "//a[@id='TabParents']").click()
     WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@id='buttonAddRelative']")))
     try:
-        if driver.find_element(By.XPATH, "//p[text()='У пользователя не настроены родственные связи']"):
+        if driver.find_element(By.XPATH, "//p[text()='У пользователя не настроены родственные связи' or text()='Пайдаланушыда туыстық қатынастар реттелмеген']"):
             fio_parent = ''
             work_place = ''
             dolzhnost = ''
             parent_iin = ''
             parent_phone = ''
     except:
-        driver.find_element(By.XPATH, "//a[@title='Редактировать']").click()
+        driver.find_element(By.XPATH, "//a[@title='Редактировать' or @title='Өңдеу']").click()
         all_text = driver.find_elements(By.XPATH, "//dl[@class='info s2']/dd")
         fio_parent = all_text[0].text
         all_text1 = driver.find_elements(By.XPATH, "//dl[@class='info big']/dt")
         all_text2 = driver.find_elements(By.XPATH, "//dl[@class='info big']/dd")
-        if all_text1[0].text == 'Должность':
+        if (all_text1[0].text == 'Должность') or (all_text1[0].text == 'Қызмет'):
             work_place = school
             dolzhnost = all_text2[0].text
             driver.find_element(By.XPATH, "//a[@id='TabPersonal']").click()
@@ -270,7 +177,7 @@ def get_all(login, password, lang):
         # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке рус.xlsx')
         # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке рус.xlsx')
         ws = wb.active
-        ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон', 'Ошибки'])
+        ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
         col = ws.column_dimensions['D']
         col1 = ws.column_dimensions['V']
         col1.number_format = numbers.FORMAT_TEXT
@@ -284,7 +191,7 @@ def get_all(login, password, lang):
         # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
         # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
         ws = wb.active
-        ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон', 'Қателер'])
+        ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
         col = ws.column_dimensions['D']
         col1 = ws.column_dimensions['V']
         col1.number_format = numbers.FORMAT_TEXT
@@ -298,13 +205,16 @@ def get_all(login, password, lang):
         return result
     elif result == "4":
         return result
+    if lang == 'kz':
+        WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+        WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
     page_num = driver.find_elements(By.XPATH, "//div[@class='pager']//li")
     num = 1
     pages = int(page_num[-1].text)
     try:
         while num <= pages+1:
             WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='header-logotype header-logotype_kz']")))
-            all = driver.find_elements(By.XPATH, "//span[text()='Ученик']/../..//a[@class='u']")
+            all = driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']")
             if not all:
                 pass
             else:
@@ -355,13 +265,16 @@ def search_by_fio(login, password, fio, lang):
         driver.find_element(By.XPATH, "//input[@id='search']").send_keys(fio)
         time.sleep(0.8)
         driver.find_element(By.XPATH, "//input[@id='go']").click()
-        if driver.find_elements(By.XPATH, "//span[text()='Ученик']/../..//a[@class='u']"):
+        if lang == 'kz':
+            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
+        if driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']"):
             if lang == 'ru':
                 wb = Workbook()
                 # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
                 # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
                 ws = wb.active
-                ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон', 'Ошибки'])
+                ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                 col = ws.column_dimensions['D']
                 col1 = ws.column_dimensions['V']
                 col1.number_format = numbers.FORMAT_TEXT
@@ -375,7 +288,7 @@ def search_by_fio(login, password, fio, lang):
                 # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
                 # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
                 ws = wb.active
-                ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон', 'Қателер'])
+                ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                 col = ws.column_dimensions['D']
                 col1 = ws.column_dimensions['V']
                 col1.number_format = numbers.FORMAT_TEXT
@@ -384,7 +297,7 @@ def search_by_fio(login, password, fio, lang):
                     column_letter = column_cells[0].column_letter
                     ws.column_dimensions[column_letter].width = 20
                     # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
-            all = driver.find_elements(By.XPATH, "//span[text()='Ученик']/../..//a[@class='u']")
+            all = driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']")
             children = []
             for i in all:
                 children.append(i.text)
@@ -441,6 +354,9 @@ def search_by_class(login, password, class_text, lang):
         time.sleep(0.8)
         driver.find_element(By.XPATH, "//input[@id='go']").click()
         time.sleep(5)
+        if lang == 'kz':
+            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
         if driver.find_elements(By.XPATH, "//div[@class='pager']//li"):
             page_num = driver.find_elements(By.XPATH, "//div[@class='pager']//li")
             num = 1
@@ -448,7 +364,7 @@ def search_by_class(login, password, class_text, lang):
             all_pupil = []
             while num <= pages+1:
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='header-logotype header-logotype_kz']")))
-                all = driver.find_elements(By.XPATH, "//span[text()='Ученик']/../..//a[@class='u']")
+                all = driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']")
                 if not all:
                     pass
                 else:
@@ -457,7 +373,7 @@ def search_by_class(login, password, class_text, lang):
                         # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                         # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                         ws = wb.active
-                        ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон', 'Ошибки'])
+                        ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
@@ -467,7 +383,7 @@ def search_by_class(login, password, class_text, lang):
                         # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                         # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                         ws = wb.active
-                        ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон', 'Қателер'])
+                        ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
@@ -515,7 +431,7 @@ def search_by_class(login, password, class_text, lang):
                 all_pupil.clear()
             return "0"
         else:
-            all = driver.find_elements(By.XPATH, "//span[text()='Ученик']/../..//a[@class='u']")
+            all = driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']")
             if not all:
                 return "20"
             else:
@@ -524,7 +440,7 @@ def search_by_class(login, password, class_text, lang):
                     # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     ws = wb.active
-                    ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон', 'Ошибки'])
+                    ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                     col = ws.column_dimensions['D']
                     col1 = ws.column_dimensions['V']
                     col1.number_format = numbers.FORMAT_TEXT
@@ -538,7 +454,7 @@ def search_by_class(login, password, class_text, lang):
                     # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                     # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                     ws = wb.active
-                    ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон', 'Қателер'])
+                    ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                     col = ws.column_dimensions['D']
                     col1 = ws.column_dimensions['V']
                     col1.number_format = numbers.FORMAT_TEXT
@@ -580,8 +496,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--login', type=str, required=True)
 parser.add_argument('--password', type=str, required=True)
 parser.add_argument('--lang', type=str, required=True)
-parser.add_argument('--fio', type=str)
-parser.add_argument('--clas', type=str)
+parser.add_argument('--fio', type=str, nargs='?')
+parser.add_argument('--clas', type=str, nargs='?')
 parser.add_argument('--mass', type=str)
 parser.add_argument('--kundelik_id', type=str)
 parser.add_argument('--accessToken', type=str)
