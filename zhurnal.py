@@ -45,7 +45,7 @@ def main_code(login, password, driver):
             driver.find_element(By.XPATH, "//input[@name='password']").send_keys(password)
             driver.find_element(By.XPATH, "//input[@type='submit']").click()
             try: 
-                if WebDriverWait(driver, 10).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='message ']"))):
+                if WebDriverWait(driver, 3).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='message ']"))):
                     driver.quit()
                     return "1"
             except:
@@ -53,7 +53,7 @@ def main_code(login, password, driver):
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Русский')]"))).click()
                 # Путь к странице "Администрирование школы"
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[text()='Образование ']"))).click()
-                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@title='Отчеты']"))).click()
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@data-test-id='Отчеты']"))).click()
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@title='Журнал']"))).click()
     except:
         return "4"
@@ -61,17 +61,14 @@ def main_code(login, password, driver):
 def get_data(driver, name, period):
     global wb
     try:
-        if period == 'Все':
-            if WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='emptyData']")):
+        if (period == 'Все') or (period == 'Барлық'):
+            if WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='emptyData']")):
                 return "0"
         else:
-            if WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='emptyData']")):
+            if WebDriverWait(driver, 5).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='emptyData']")):
                 driver.quit()
                 return "10"
     except:
-        if language == 'kz':
-            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
-            WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
         if driver.find_elements(By.XPATH, "//div[@class='pager']//li"):
             page_num = driver.find_elements(By.XPATH, "//div[@class='pager']//li")
             num = 1
@@ -79,70 +76,93 @@ def get_data(driver, name, period):
             all_changes = []
             while num <= pages+1:
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[@class='header-logotype header-logotype_kz']")))
-                # if typeOfAction == 'Добавление':
-                #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='create']")
-                # elif typeOfAction == 'Изменение':
-                #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='update']")
-                # elif typeOfAction == 'Удаление':
-                #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='delete']")
-                # else:
                 all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr")
-                    # all = all[2:]
                 if not all:
                     pass
                 else:
                     if language == 'ru':
                         wb = Workbook()
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
-                        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                         ws = wb.active
-                        ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета'])
+                        if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                            ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Вид отметки', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета'])
+                        else:
+                            ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета', 'Комментарий'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     else:
                         wb = Workbook()
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                         ws = wb.active
-                        ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы'])
+                        if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                            ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Белгі түрі',  'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы'])
+                        else:
+                            ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы', 'Комментарий'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                    for i in all:
-                        if 'Автор изменений' in i.text or 'Өзгерістер авторы' in i.text:
+                    for id, i in enumerate(all):
+                        if ('Автор изменений' in i.text) or ('Өзгерістер авторы' in i.text):
                             continue
                         elif i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == "7":
-                            continue
-                        elif i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == '10':
+                            if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                date = i.text
+                            else:
+                                if name != None:
+                                    if all[id-1].get_attribute('class') == i.get_attribute('class'):
+                                        last = name.split(" ")[0].lower()
+                                        firstname = name.split(" ")[1][:1].lower()
+                                        name = f"{last} {firstname}"
+                                        if name not in all[id-1].find_elements(By.TAG_NAME, 'td')[8].text.lower():
+                                            continue
+                                        else:
+                                            all_changes[-1].append(i.text)
+                                else:
+                                    if (all_changes[-1][1] == all[id-1].find_elements(By.TAG_NAME, 'td')[0].text) and (all_changes[-1][2] == all[id-1].find_elements(By.TAG_NAME, 'td')[1].text) and (all_changes[-1][3] == all[id-1].find_elements(By.TAG_NAME, 'td')[3].text) and (all_changes[-1][4] == all[id-1].find_elements(By.TAG_NAME, 'td')[6].text) and (all_changes[-1][5] == all[id-1].find_elements(By.TAG_NAME, 'td')[7].text) and (all_changes[-1][6] == all[id-1].find_elements(By.TAG_NAME, 'td')[8].text):
+                                        all_changes[-1].append(i.text)
+                        elif (i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == '10') or (i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == '9'):
                             date = i.text
+                            if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                continue
                         else:
-                            if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or typeOfAction == 'Все':
-                                if len(name) != 0:
+                            if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or (typeOfAction == 'Все') or (typeOfAction == 'Барлық') or (typeOfAction == 'Қосу' and i.get_attribute("class") == 'create') or (typeOfAction == 'Жою' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Өзгерту' and i.get_attribute("class") == 'update'):
+                                if name != None:
                                     try:
                                         last = name.split(" ")[0].lower()
                                         firstname = name.split(" ")[1][:1].lower()
                                         name = f"{last} {firstname}"
-                                        if name not in i.find_elements(By.TAG_NAME, 'td')[8].text.lower():
-                                            continue
+                                        if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                            if name not in i.find_elements(By.TAG_NAME, 'td')[6].text.lower():
+                                                continue
+                                        else:
+                                            if name not in i.find_elements(By.TAG_NAME, 'td')[8].text.lower():
+                                                continue
                                     except:
                                         pass
-                                # print(driver.find_element(By.XPATH, f"//table[@class='grid gridLines vam marks ']//tr[{count+3}]/td[1]").text)
                                 try:
-                                    time = i.find_elements(By.TAG_NAME, 'td')[0].text
-                                    author = i.find_elements(By.TAG_NAME, 'td')[1].text 
-                                    action = i.find_elements(By.TAG_NAME, 'td')[3].text
-                                    old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
-                                    new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
-                                    student = i.find_elements(By.TAG_NAME, 'td')[8].text
-                                    if len(subjects) != 0:
+                                    if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                        time = i.find_elements(By.TAG_NAME, 'td')[0].text
+                                        author = i.find_elements(By.TAG_NAME, 'td')[1].text 
+                                        action = i.find_elements(By.TAG_NAME, 'td')[2].text
+                                        grade_type = i.find_elements(By.TAG_NAME, 'td')[3].text
+                                        old_value = i.find_elements(By.TAG_NAME, 'td')[4].text
+                                        new_value = i.find_elements(By.TAG_NAME, 'td')[5].text
+                                        student = i.find_elements(By.TAG_NAME, 'td')[6].text
                                         subject = subjects
+                                        change = [date, time, author, action, grade_type, old_value, new_value, student, subject]
+                                        all_changes.append(change)
                                     else:
-                                        subject = i.find_elements(By.TAG_NAME, 'td')[9].text
-                                    change = [date, time, author, action, old_value, new_value, student, subject]
-                                    all_changes.append(change)
+                                        time = i.find_elements(By.TAG_NAME, 'td')[0].text
+                                        author = i.find_elements(By.TAG_NAME, 'td')[1].text 
+                                        action = i.find_elements(By.TAG_NAME, 'td')[3].text
+                                        old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
+                                        new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
+                                        student = i.find_elements(By.TAG_NAME, 'td')[8].text
+                                        if subjects != None:
+                                            subject = subjects
+                                        else:
+                                            subject = i.find_elements(By.TAG_NAME, 'td')[9].text
+                                        change = [date, time, author, action, old_value, new_value, student, subject]
+                                        all_changes.append(change)
                                 except:
                                     continue
                 num += 1
@@ -161,70 +181,93 @@ def get_data(driver, name, period):
             return "0"
         else:
             all_changes = []
-            # if typeOfAction == 'Добавление':
-            #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='create']")
-            # elif typeOfAction == 'Изменение':
-            #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='update']")
-            # elif typeOfAction == 'Удаление':
-            #     all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr[@class='delete']")
-            # else:
             all = driver.find_elements(By.XPATH, "//table[@class='grid gridLines vam marks ']//tr")
-                # all = all[2:]
             if not all:
                 return "10"
             else:
                 if language == 'ru':
                     wb = Workbook()
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
-                    # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     ws = wb.active
-                    ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета'])
+                    if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                        ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Вид отметки', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета'])
+                    else:
+                        ws.append(['Дата изменений', 'Время изменений', 'Автор изменений', 'Действие', 'Старое значение', 'Новое значение', 'Ученик', 'Название предмета', 'Комментарий'])
                     for column_cells in ws.columns:
                         column_letter = column_cells[0].column_letter
                         ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                 else:
                     wb = Workbook()
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                    # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                     ws = wb.active
-                    ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы'])
+                    if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                        ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Белгі түрі',  'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы'])
+                    else:
+                        ws.append(['Өзгеріс күні', 'Өзгеріс уақыты', 'Өзгерістер авторы', 'Әрекет', 'Ескі мәні', 'Жаңа мән', 'Оқушы', 'Пәннің атауы', 'Комментарий'])
                     for column_cells in ws.columns:
                         column_letter = column_cells[0].column_letter
                         ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                for i in all:
-                    if 'Автор изменений' in i.text or 'Өзгерістер авторы' in i.text:
+                for id, i in enumerate(all):
+                    if ('Автор изменений' in i.text) or ('Өзгерістер авторы' in i.text):
                         continue
-                    elif i.get_attribute("colspan") == "7":
-                        continue
-                    elif len(i.text) == 10:
+                    elif i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == "7":
+                        if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                            date = i.text
+                        else:
+                            if name != None:
+                                if all[id-1].get_attribute('class') == i.get_attribute('class'):
+                                    last = name.split(" ")[0].lower()
+                                    firstname = name.split(" ")[1][:1].lower()
+                                    name = f"{last} {firstname}"
+                                    if name not in all[id-1].find_elements(By.TAG_NAME, 'td')[8].text.lower():
+                                        continue
+                                    else:
+                                        all_changes[-1].append(i.text)
+                            else:
+                                if (all_changes[-1][1] == all[id-1].find_elements(By.TAG_NAME, 'td')[0].text) and (all_changes[-1][2] == all[id-1].find_elements(By.TAG_NAME, 'td')[1].text) and (all_changes[-1][3] == all[id-1].find_elements(By.TAG_NAME, 'td')[3].text) and (all_changes[-1][4] == all[id-1].find_elements(By.TAG_NAME, 'td')[6].text) and (all_changes[-1][5] == all[id-1].find_elements(By.TAG_NAME, 'td')[7].text) and (all_changes[-1][6] == all[id-1].find_elements(By.TAG_NAME, 'td')[8].text):
+                                    all_changes[-1].append(i.text)
+                    elif (i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == '10') or (i.find_element(By.TAG_NAME, "td").get_attribute('colspan') == '9'):
                         date = i.text
+                        if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                            continue
                     else:
-                        if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or typeOfAction == 'Все':
-                            if len(name) != 0:
+                        if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or (typeOfAction == 'Все') or (typeOfAction == 'Барлық') or (typeOfAction == 'Қосу' and i.get_attribute("class") == 'create') or (typeOfAction == 'Жою' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Өзгерту' and i.get_attribute("class") == 'update'):
+                            if name != None:
                                 try:
                                     last = name.split(" ")[0].lower()
                                     firstname = name.split(" ")[1][:1].lower()
                                     name = f"{last} {firstname}"
-                                    if name not in i.find_elements(By.TAG_NAME, 'td')[8].text.lower():
-                                        continue
+                                    if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                        if name not in i.find_elements(By.TAG_NAME, 'td')[6].text.lower():
+                                            continue
+                                    else:
+                                        if name not in i.find_elements(By.TAG_NAME, 'td')[8].text.lower():
+                                            continue
                                 except:
                                     pass
-                            # print(driver.find_element(By.XPATH, f"//table[@class='grid gridLines vam marks ']//tr[{count+3}]/td[1]").text)
                             try:
-                                time = i.find_elements(By.TAG_NAME, 'td')[0].text
-                                author = i.find_elements(By.TAG_NAME, 'td')[1].text 
-                                action = i.find_elements(By.TAG_NAME, 'td')[3].text
-                                old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
-                                new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
-                                student = i.find_elements(By.TAG_NAME, 'td')[8].text
-                                if len(subjects) != 0:
+                                if (period == 'Итоговые') or (period == 'Қорытындылар'):
+                                    time = i.find_elements(By.TAG_NAME, 'td')[0].text
+                                    author = i.find_elements(By.TAG_NAME, 'td')[1].text 
+                                    action = i.find_elements(By.TAG_NAME, 'td')[2].text
+                                    grade_type = i.find_elements(By.TAG_NAME, 'td')[3].text
+                                    old_value = i.find_elements(By.TAG_NAME, 'td')[4].text
+                                    new_value = i.find_elements(By.TAG_NAME, 'td')[5].text
+                                    student = i.find_elements(By.TAG_NAME, 'td')[6].text
                                     subject = subjects
+                                    change = [date, time, author, action, grade_type, old_value, new_value, student, subject]
+                                    all_changes.append(change)
                                 else:
-                                    subject = i.find_elements(By.TAG_NAME, 'td')[9].text
-                                change = [date, time, author, action, old_value, new_value, student, subject]
-                                all_changes.append(change)
+                                    time = i.find_elements(By.TAG_NAME, 'td')[0].text
+                                    author = i.find_elements(By.TAG_NAME, 'td')[1].text 
+                                    action = i.find_elements(By.TAG_NAME, 'td')[3].text
+                                    old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
+                                    new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
+                                    student = i.find_elements(By.TAG_NAME, 'td')[8].text
+                                    if subjects != None:
+                                        subject = subjects
+                                    else:
+                                        subject = i.find_elements(By.TAG_NAME, 'td')[9].text
+                                    change = [date, time, author, action, old_value, new_value, student, subject]
+                                    all_changes.append(change)
                             except:
                                 continue
                 if all_changes == []:
@@ -237,7 +280,6 @@ def get_data(driver, name, period):
                     col.number_format = numbers.FORMAT_TEXT
     return "0"
 
-# Скрипт для выгрузки по классам
 def search(login, password, studyYear, classNumber, period, name, typeOfAction, subjects, dateFrom, dateTo, massiveUnloading, language):
     global subject
     
@@ -251,26 +293,31 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
         driver.quit()
         return result
     try:
-        WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, f"//a[text()='{studyYear}']")).click()
+        WebDriverWait(driver, 4).until(lambda driver: driver.find_element(By.XPATH, f"//a[text()='{studyYear}']")).click()
     except:
         driver.quit()
         return "12"
     try:
-        WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, f"//a[text()='{classNumber}']")).click()
+        WebDriverWait(driver, 4).until(lambda driver: driver.find_element(By.XPATH, f"//a[text()='{classNumber}']")).click()
     except:
         driver.quit()
         return "20"
     try:
-        if len(subjects) != 0:
+        if subjects != None:
             select = Select(driver.find_element(By.ID, 'subject'))
             select.select_by_visible_text(subjects)
     except:
         driver.quit()
         return "15"
     if len(period) != 0:
-        if period != 'Все':
+        if (period != 'Все') and (period != 'Барлық'):
+            if language == 'kz':
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()            
             driver.find_element(By.XPATH, f"//a[text()='{period}']").click()
-            if len(dateFrom) != 0:
+            driver.find_element(By.XPATH, "//div[@class='header-localization-select__info']/div[1]").click()
+            driver.find_element(By.XPATH, "//a[contains(text(), 'Русский')]").click()
+            if dateFrom != None:
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//input[@id='datefrom']")).click()
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@id='calendar']"))
                 if dateFrom.split('.')[1] == '01':
@@ -429,7 +476,7 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
                         WebDriverWait(driver, 60).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='content']"))
                         time.sleep(2)
                         driver.find_element(By.XPATH, f"//a[text()={dateFrom.split('.')[0]}]").click()
-            if len(dateTo) != 0:
+            if dateTo != None:
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//input[@id='dateto']")).click()
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@id='calendar']"))
                 if dateTo.split('.')[1] == '01':
@@ -589,7 +636,10 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
                         WebDriverWait(driver, 60).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='content']"))
                         time.sleep(2)
                         driver.find_element(By.XPATH, f"//a[text()={dateTo.split('.')[0]}]").click()
-            driver.find_element(By.XPATH, "//input[@id='button']").click()
+                driver.find_element(By.XPATH, "//input[@id='button']").click()
+            if language == 'kz':
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
             result = get_data(driver, name, period)
             if result != "0":
                 return result
@@ -603,8 +653,11 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
             driver.quit()
             return result
         else:
+            if language == 'kz':
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
             for i in range(1, 5):
-                driver.find_element(By.XPATH, f"//a[text()='{i}-я четверть']").click()
+                driver.find_element(By.XPATH, f"//a[text()='{i}-я четверть' or text()='{i}-тоқсан']").click()
                 result = get_data(driver, name, period)
             if result != "0":
                 return result
@@ -639,7 +692,16 @@ args = parser.parse_args()
 executable_path = rf"{args.chromedriver}"
 chrome_options.binary_location = rf"{args.chromium}"
 name = args.name
-period = args.period
+if args.period == '1-і тоқсан':
+    period = '1-тоқсан'
+elif args.period == '2-і тоқсан':
+    period = '2-тоқсан'
+elif args.period == '3-і тоқсан':
+    period = '3-тоқсан'
+elif args.period == '4-і тоқсан':
+    period = '4-тоқсан'
+else:
+    period = args.period
 typeOfAction = args.typeOfAction
 subjects = args.subjects
 dateFrom = args.dateFrom
