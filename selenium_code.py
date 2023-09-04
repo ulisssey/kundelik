@@ -174,8 +174,6 @@ def get_all(login, password, lang):
     driver = webdriver.Chrome(options=chrome_options, service=Service(executable_path=executable_path))
     if lang == 'ru':
         wb = Workbook()
-        # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке рус.xlsx')
-        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке рус.xlsx')
         ws = wb.active
         ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
         col = ws.column_dimensions['D']
@@ -185,11 +183,8 @@ def get_all(login, password, lang):
         for column_cells in ws.columns:
             column_letter = column_cells[0].column_letter
             ws.column_dimensions[column_letter].width = 20
-            # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке рус.xlsx')
     else:
         wb = Workbook()
-        # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
-        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
         ws = wb.active
         ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
         col = ws.column_dimensions['D']
@@ -199,7 +194,6 @@ def get_all(login, password, lang):
         for column_cells in ws.columns:
             column_letter = column_cells[0].column_letter
             ws.column_dimensions[column_letter].width = 20
-            # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
     result = main_code(login, password, driver)
     if result == "1":
         return result
@@ -229,7 +223,6 @@ def get_all(login, password, lang):
                         driver.back()
                     else:
                         pupil.append(rows)
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о массовой выгрузке каз.xlsx')
                         driver.back()
                         driver.back()
                         driver.back()
@@ -271,8 +264,6 @@ def search_by_fio(login, password, fio, lang):
         if driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']"):
             if lang == 'ru':
                 wb = Workbook()
-                # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
-                # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
                 ws = wb.active
                 ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                 col = ws.column_dimensions['D']
@@ -282,11 +273,8 @@ def search_by_fio(login, password, fio, lang):
                 for column_cells in ws.columns:
                     column_letter = column_cells[0].column_letter
                     ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
             else:
                 wb = Workbook()
-                # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
-                # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
                 ws = wb.active
                 ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                 col = ws.column_dimensions['D']
@@ -296,7 +284,6 @@ def search_by_fio(login, password, fio, lang):
                 for column_cells in ws.columns:
                     column_letter = column_cells[0].column_letter
                     ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
             all = driver.find_elements(By.XPATH, "//span[text()='Оқушы' or text()='Ученик']/../..//a[@class='u']")
             children = []
             for i in all:
@@ -317,25 +304,14 @@ def search_by_fio(login, password, fio, lang):
                     driver.back()
                     driver.back()
                     driver.back()
-            # root = Tk()
-            # root.withdraw()
-            # file_path = filedialog.asksaveasfilename(defaultextension='.xlsx')
             file_path = ''
             file = save_file(file_path)
             wb.save(file)
             return "0"
         else:
             if lang == 'ru':
-            #     wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
-            #     ws = wb.active
-            #     ws.append([fio] + ['']*23 + ['Не найден ученик с таким ФИО'])
-            #     wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО рус.xlsx')
                 return "9"
             else:
-                # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
-                # ws = wb.active
-                # ws.append([fio] + ['']*23 + ['Мұндай аты-жөнімен оқушы табылмады'])
-                # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по ФИО каз.xlsx')
                 return "9"
     except:
         return "4"
@@ -370,24 +346,18 @@ def search_by_class(login, password, class_text, lang):
                 else:
                     if lang == 'ru':
                         wb = Workbook()
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
-                        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                         ws = wb.active
                         ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     else:
                         wb = Workbook()
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                        # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                         ws = wb.active
                         ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                         for column_cells in ws.columns:
                             column_letter = column_cells[0].column_letter
                             ws.column_dimensions[column_letter].width = 20
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                     for i in all:
                         all_pupil.append(i.text)
                     children = []
@@ -401,8 +371,6 @@ def search_by_class(login, password, class_text, lang):
                             driver.back()
                         else:
                             pupil.append(rows)
-                            
-                            # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                             driver.back()
                             driver.back()
                             driver.back()
@@ -437,8 +405,6 @@ def search_by_class(login, password, class_text, lang):
             else:
                 if lang == 'ru':
                     wb = Workbook()
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
-                    # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                     ws = wb.active
                     ws.append(['Фио', 'Пол', 'Дата рождения', 'ИИН', 'Класс', 'Параллель', 'Моб. телефон', 'Дом. телефон', 'Адрес проживания', 'Эл. почта', 'Национальность', 'Родной язык', 'Свидетельство о рождении', 'Дата выдачи', 'Кем выдан', 'Место выдачи', 'Медицинская группа здоровья', 'Физкультурная группа здоровья', 'Был в дошкольном учреждении', 'Родитель / Законный представитель', 'Место работы', 'Должность', 'ИИН', 'Моб. телефон'])
                     col = ws.column_dimensions['D']
@@ -448,11 +414,8 @@ def search_by_class(login, password, class_text, lang):
                     for column_cells in ws.columns:
                         column_letter = column_cells[0].column_letter
                         ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу рус.xlsx')
                 else:
                     wb = Workbook()
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
-                    # wb = openpyxl.load_workbook(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                     ws = wb.active
                     ws.append(['Аты жөні', 'Жынысы', 'Туған күні', 'ЖСН', 'Сынып', 'Параллель', 'Ұялы телефон', 'Үй телефон', 'Тұрғылықты мекенжайы', 'Электрондық пошта', 'Ұлты', 'Ана тілі', 'Туу туралы куәлік', 'Шығарылған күні', 'Кіммен берілді', 'Берілген жері', 'Дәрігерлік денсаулық тобы', 'Дене сауықтыру тобы', 'Мектепке дейінгі мекемеде болды', 'Ата-ана/заңды өкіл', 'Жұмыс орны', 'Лауазымы', 'ЖСН', 'Ұялы телефон'])
                     col = ws.column_dimensions['D']
@@ -462,7 +425,6 @@ def search_by_class(login, password, class_text, lang):
                     for column_cells in ws.columns:
                         column_letter = column_cells[0].column_letter
                         ws.column_dimensions[column_letter].width = 20
-                    # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                 children = []
                 for i in all:
                     children.append(i.text)
@@ -474,7 +436,6 @@ def search_by_class(login, password, class_text, lang):
                         driver.back()
                     else:
                         pupil.append(rows)
-                        # wb.save(f'./logs/{day}{month}{year}_Отчет о выгрузке по классу каз.xlsx')
                         driver.back()
                         driver.back()
                         driver.back()

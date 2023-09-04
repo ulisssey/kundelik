@@ -107,7 +107,7 @@ def get_data(driver, name, period):
                             if (period == 'Итоговые') or (period == 'Қорытындылар'):
                                 date = i.text
                             else:
-                                if name != None:
+                                if len(name) != 0:
                                     if all[id-1].get_attribute('class') == i.get_attribute('class'):
                                         last = name.split(" ")[0].lower()
                                         firstname = name.split(" ")[1][:1].lower()
@@ -125,7 +125,7 @@ def get_data(driver, name, period):
                                 continue
                         else:
                             if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or (typeOfAction == 'Все') or (typeOfAction == 'Барлық') or (typeOfAction == 'Қосу' and i.get_attribute("class") == 'create') or (typeOfAction == 'Жою' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Өзгерту' and i.get_attribute("class") == 'update'):
-                                if name != None:
+                                if len(name) != 0:
                                     try:
                                         last = name.split(" ")[0].lower()
                                         firstname = name.split(" ")[1][:1].lower()
@@ -157,7 +157,7 @@ def get_data(driver, name, period):
                                         old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
                                         new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
                                         student = i.find_elements(By.TAG_NAME, 'td')[8].text
-                                        if subjects != None:
+                                        if len(subjects) != 0:
                                             subject = subjects
                                         else:
                                             subject = i.find_elements(By.TAG_NAME, 'td')[9].text
@@ -212,7 +212,7 @@ def get_data(driver, name, period):
                         if (period == 'Итоговые') or (period == 'Қорытындылар'):
                             date = i.text
                         else:
-                            if name != None:
+                            if len(name) != 0:
                                 if all[id-1].get_attribute('class') == i.get_attribute('class'):
                                     last = name.split(" ")[0].lower()
                                     firstname = name.split(" ")[1][:1].lower()
@@ -230,7 +230,7 @@ def get_data(driver, name, period):
                             continue
                     else:
                         if (typeOfAction == 'Добавление' and i.get_attribute("class") == 'create') or (typeOfAction == 'Удаление' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Изменение' and i.get_attribute("class") == 'update') or len(typeOfAction) == 0 or (typeOfAction == 'Все') or (typeOfAction == 'Барлық') or (typeOfAction == 'Қосу' and i.get_attribute("class") == 'create') or (typeOfAction == 'Жою' and i.get_attribute("class") == 'delete') or (typeOfAction == 'Өзгерту' and i.get_attribute("class") == 'update'):
-                            if name != None:
+                            if len(name) != 0:
                                 try:
                                     last = name.split(" ")[0].lower()
                                     firstname = name.split(" ")[1][:1].lower()
@@ -262,7 +262,7 @@ def get_data(driver, name, period):
                                     old_value = i.find_elements(By.TAG_NAME, 'td')[6].text
                                     new_value = i.find_elements(By.TAG_NAME, 'td')[7].text
                                     student = i.find_elements(By.TAG_NAME, 'td')[8].text
-                                    if subjects != None:
+                                    if len(subjects) != 0:
                                         subject = subjects
                                     else:
                                         subject = i.find_elements(By.TAG_NAME, 'td')[9].text
@@ -303,7 +303,7 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
         driver.quit()
         return "20"
     try:
-        if subjects != None:
+        if len(subjects) != 0:
             select = Select(driver.find_element(By.ID, 'subject'))
             select.select_by_visible_text(subjects)
     except:
@@ -315,9 +315,9 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
                 WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()            
             driver.find_element(By.XPATH, f"//a[text()='{period}']").click()
-            driver.find_element(By.XPATH, "//div[@class='header-localization-select__info']/div[1]").click()
-            driver.find_element(By.XPATH, "//a[contains(text(), 'Русский')]").click()
-            if dateFrom != None:
+            if len(dateFrom) != 0:
+                driver.find_element(By.XPATH, "//div[@class='header-localization-select__info']/div[1]").click()
+                driver.find_element(By.XPATH, "//a[contains(text(), 'Русский')]").click()
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//input[@id='datefrom']")).click()
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@id='calendar']"))
                 if dateFrom.split('.')[1] == '01':
@@ -476,7 +476,7 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
                         WebDriverWait(driver, 60).until(lambda driver: driver.find_element(By.XPATH, "//div[@class='content']"))
                         time.sleep(2)
                         driver.find_element(By.XPATH, f"//a[text()={dateFrom.split('.')[0]}]").click()
-            if dateTo != None:
+            if len(dateTo) != 0:
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//input[@id='dateto']")).click()
                 WebDriverWait(driver, 10).until(lambda driver: driver.find_element(By.XPATH, "//div[@id='calendar']"))
                 if dateTo.split('.')[1] == '01':
@@ -637,9 +637,9 @@ def search(login, password, studyYear, classNumber, period, name, typeOfAction, 
                         time.sleep(2)
                         driver.find_element(By.XPATH, f"//a[text()={dateTo.split('.')[0]}]").click()
                 driver.find_element(By.XPATH, "//input[@id='button']").click()
-            if language == 'kz':
-                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
-                WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
+                if language == 'kz':
+                    WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//div[@class='header-localization-select__info']/div[1]"))).click()
+                    WebDriverWait(driver, 60).until(EC.visibility_of_element_located((By.XPATH, "//a[contains(text(), 'Қазақ')]"))).click()
             result = get_data(driver, name, period)
             if result != "0":
                 return result
